@@ -1,4 +1,4 @@
-name: firebase_crud_ap
+name: crud_firebase_bloc
 description: A new Flutter application.
 
 # The following line prevents the package from being accidentally published to
@@ -32,6 +32,7 @@ dependencies:
   http:
   image_picker:
   mime_type:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:

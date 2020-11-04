@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_crud_ap/src/bloc/provider.dart';
 import 'package:firebase_crud_ap/src/utils/utils.dart' as utils;
 
-class LoginPage extends StatelessWidget {
-  final userProvider = new UserProvider();
+class RegisterPage extends StatelessWidget {
+  final UserProvider userProvider = new UserProvider();
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +100,7 @@ class LoginPage extends StatelessWidget {
             child: Column(
               children: [
                 Text(
-                  'Login!!',
+                  'Register',
                   style: TextStyle(fontSize: 20.0),
                 ),
                 SizedBox(
@@ -119,9 +119,8 @@ class LoginPage extends StatelessWidget {
             ),
           ),
           FlatButton(
-              onPressed: () =>
-                  Navigator.pushReplacementNamed(context, 'register'),
-              child: Text('Create a new Account')),
+              onPressed: () => Navigator.pushReplacementNamed(context, 'login'),
+              child: Text('Already have a account?')),
           SizedBox(
             height: 100.0,
           ),
@@ -181,6 +180,8 @@ class LoginPage extends StatelessWidget {
     //formValidStream
     //snapshot.hasData
 
+    //todo: unable button when is being submitted
+
     return StreamBuilder(
         stream: bloc.formValidStream,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -195,18 +196,17 @@ class LoginPage extends StatelessWidget {
               elevation: 0.0,
               color: Colors.deepPurple,
               textColor: Colors.white,
-              onPressed: snapshot.hasData ? () => _login(context, bloc) : null);
+              onPressed:
+                  snapshot.hasData ? () => _register(context, bloc) : null);
         });
   }
 
-  _login(BuildContext context, LoginBloc bloc) async {
-    Map info = await userProvider.login(bloc.email, bloc.password);
+  _register(BuildContext context, LoginBloc bloc) async {
+    final info = await userProvider.newUser(bloc.email, bloc.password);
 
-    if (info['ok']){
-     Navigator.pushReplacementNamed(context, 'home');
-
-    }else
-    {
+    if (info['ok']) {
+      Navigator.pushReplacementNamed(context, 'home');
+    } else {
       utils.showAlert(context, info['message']);
     }
   }
