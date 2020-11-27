@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:firebase_crud_ap/src/preferences/user_preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:firebase_crud_ap/src/models/product_model.dart';
-import 'package:mime_type/mime_type.dart';
 import 'package:http_parser/http_parser.dart';
+import 'package:mime_type/mime_type.dart';
+
+import 'package:crud_firebase_bloc/src/preferences/user_preferences.dart';
+import 'package:crud_firebase_bloc/src/models/product_model.dart';
 
 class ProductsProvider {
   final String _url = 'https://flutter-varios-314d2.firebaseio.com';
@@ -24,21 +24,21 @@ class ProductsProvider {
     return true;
   }
 
-  Future<List<ProductModel>> uploadProducts() async {
+  Future<List<ProductModel>> getProducts() async {
     final url = '$_url/products.json?auth=${_prefs.token}';
     final resp = await http.get(url);
 
     final Map<String, dynamic> decodedData = json.decode(resp.body);
-
-    if (decodedData == null) return [];
-
     final List<ProductModel> products = new List();
 
-    decodedData.forEach((firstProperty, product) {
-      final productTemp = ProductModel.fromJson(product);
-      productTemp.id = firstProperty;
+    if (decodedData == null || decodedData['error'] != null) return []; 
 
-      products.add(productTemp);
+
+    decodedData.forEach((idProperty, product) {
+      final newProductInTheList = ProductModel.fromJson(product);
+      newProductInTheList.id = idProperty;
+
+      products.add(newProductInTheList);
     });
 
     return products;

@@ -1,7 +1,7 @@
-import 'package:firebase_crud_ap/src/providers/user_provider.dart';
+import 'package:crud_firebase_bloc/src/providers/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_crud_ap/src/bloc/provider.dart';
-import 'package:firebase_crud_ap/src/utils/utils.dart' as utils;
+import 'package:crud_firebase_bloc/src/bloc/provider.dart';
+import 'package:crud_firebase_bloc/src/utils/utils.dart' as utils;
 
 class RegisterPage extends StatelessWidget {
   final UserProvider userProvider = new UserProvider();

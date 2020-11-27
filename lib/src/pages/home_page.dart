@@ -1,22 +1,23 @@
+import 'package:crud_firebase_bloc/src/bloc/products_bloc.dart';
 import 'package:flutter/material.dart';
 
-import 'package:firebase_crud_ap/src/models/product_model.dart';
-import 'package:firebase_crud_ap/src/providers/product_provider.dart';
-import 'package:firebase_crud_ap/src/bloc/provider.dart';
+import 'package:crud_firebase_bloc/src/models/product_model.dart';
+import 'package:crud_firebase_bloc/src/bloc/provider.dart';
 
 class HomePage extends StatelessWidget {
-  final productProvider = new ProductsProvider();
+  //final productProvider = new ProductsProvider();
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final bloc = Provider.of(context);
+    //final bloc = Provider.of(context);
+    final productsBloc = Provider.productsBloc(context);
+    productsBloc.getProducts();
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Home page'),
       ),
-      body: _createList(),
+      body: _createList(productsBloc),
       floatingActionButton: _createButton(context),
     );
   }
@@ -29,33 +30,38 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _createList() {
-    return FutureBuilder(
-        future: productProvider.uploadProducts(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
-          if (snapshot.hasData) {
-            final products = snapshot.data;
-            return ListView.builder(
-              itemCount: products.length,
-              itemBuilder: (context, i) => _createItem(context, products[i]),
-            );
-          } else {
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+  _createList(ProductsBloc productsBloc) {
+    return StreamBuilder(
+      stream: productsBloc.productsStream,
+      builder:
+          (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
+        if (snapshot.hasData) {
+          final products = snapshot.data;
+          return ListView.builder(
+            itemCount: products.length,
+            itemBuilder: (context, i) =>
+                _createItem(context, productsBloc, products[i]),
+          );
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
   }
 
-  Widget _createItem(BuildContext context, ProductModel product) {
+  Widget _createItem(
+      BuildContext context, ProductsBloc productsBloc, ProductModel product) {
     return Dismissible(
         key: UniqueKey(),
         background: Container(
           color: Colors.red,
         ),
         onDismissed: (direction) {
-          productProvider.deleteProduct(product.id);
+          productsBloc.deleteProduct(product.id);
+          productsBloc.getProducts();
+          //productProvider.deleteProduct(product.id);
         },
         child: Card(
             child: Column(

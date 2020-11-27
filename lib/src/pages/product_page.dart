@@ -1,9 +1,10 @@
 import 'dart:io';
-
-import 'package:firebase_crud_ap/src/models/product_model.dart';
-import 'package:firebase_crud_ap/src/providers/product_provider.dart';
-import 'package:firebase_crud_ap/src/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
+
+import 'package:crud_firebase_bloc/src/bloc/products_bloc.dart';
+import 'package:crud_firebase_bloc/src/bloc/provider.dart';
+import 'package:crud_firebase_bloc/src/models/product_model.dart';
+import 'package:crud_firebase_bloc/src/utils/utils.dart' as utils;
 import 'package:image_picker/image_picker.dart';
 
 class ProductPage extends StatefulWidget {
@@ -14,14 +15,17 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   final formKey = GlobalKey<FormState>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  final ProductsProvider productsProvider = new ProductsProvider();
+  //final ProductsProvider productsProvider = new ProductsProvider();
 
+  ProductsBloc productsBloc;
   ProductModel product = new ProductModel();
   bool _saving = false;
   File photo;
 
   @override
   Widget build(BuildContext context) {
+    productsBloc = Provider.productsBloc(context);
+
     final ProductModel prodData = ModalRoute.of(context).settings.arguments;
 
     if (prodData != null) {
@@ -83,12 +87,12 @@ class _ProductPageState extends State<ProductPage> {
 
   _createPrice() {
     return TextFormField(
-      onSaved: (value) => product.value = double.parse(value),
       initialValue: product.value.toString(),
       keyboardType: TextInputType.numberWithOptions(decimal: true),
       decoration: InputDecoration(
         labelText: 'Price',
       ),
+      onSaved: (value) => product.value = double.parse(value),
       validator: (value) {
         if (utils.isNumeric(value))
           return null;
@@ -114,10 +118,10 @@ class _ProductPageState extends State<ProductPage> {
     return SwitchListTile(
       value: product.available,
       activeColor: Colors.deepPurple,
+      title: Text('Available'),
       onChanged: (value) => setState(() {
         product.available = value;
       }),
-      title: Text('Available'),
     );
   }
 
@@ -126,25 +130,26 @@ class _ProductPageState extends State<ProductPage> {
 
     // When the form is valid
     formKey.currentState.save();
-
+    //Todo: revisar estos _saving
     setState(() {
       _saving = true;
     });
 
     if (photo != null) {
-      product.urlPhoto = await productsProvider.uploadImagen(photo);
+      product.urlPhoto = await productsBloc.uploadPhoto(photo);
     }
 
     if (product.id == null) {
-      productsProvider.createProduct(product);
+      productsBloc.createProduct(product);
     } else {
-      productsProvider.editProduct(product);
+      productsBloc.editProduct(product);
     }
 
+/*
     setState(() {
       _saving = false;
     });
-
+*/
     _showSnakbar('Record saved');
 
     Navigator.pop(context);

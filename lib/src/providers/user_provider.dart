@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:firebase_crud_ap/src/preferences/user_preferences.dart';
+import 'package:crud_firebase_bloc/src/preferences/user_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class UserProvider {

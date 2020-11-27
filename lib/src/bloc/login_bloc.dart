@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:rxdart/rxdart.dart';
 
-import 'package:firebase_crud_ap/src/bloc/validators.dart';
+import 'package:crud_firebase_bloc/src/bloc/validators.dart';
 
 class LoginBloc with Validators {
   /*

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_crud_ap/src/pages/product_page.dart';
-import 'package:firebase_crud_ap/src/pages/register_page.dart';
-import 'package:firebase_crud_ap/src/pages/home_page.dart';
-import 'package:firebase_crud_ap/src/pages/login_page.dart';
-import 'package:firebase_crud_ap/src/bloc/provider.dart';
-import 'package:firebase_crud_ap/src/preferences/user_preferences.dart';
+import 'package:crud_firebase_bloc/src/pages/product_page.dart';
+import 'package:crud_firebase_bloc/src/pages/register_page.dart';
+import 'package:crud_firebase_bloc/src/pages/home_page.dart';
+import 'package:crud_firebase_bloc/src/pages/login_page.dart';
+import 'package:crud_firebase_bloc/src/bloc/provider.dart';
+import 'package:crud_firebase_bloc/src/preferences/user_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
