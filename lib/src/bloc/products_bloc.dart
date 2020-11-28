@@ -1,56 +1,62 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:crud_firebase_bloc/src/models/product_model.dart';
 import 'package:crud_firebase_bloc/src/providers/product_provider.dart';
-import 'package:rxdart/subjects.dart';
 
 class ProductsBloc {
   /* 
-   * Controllers
+   * Stream Controllers
   */
 
-  final _productsController = new BehaviorSubject<List<ProductModel>>();
+  final _productsStreamController = new StreamController<List<ProductModel>>();
 
-  final _uploadingController = new BehaviorSubject<bool>();
+  final _uploadingStreamController = new StreamController<bool>();
 
   final _productProvider = ProductsProvider();
 
   /* 
-   * Streams
+   * Getter: stream and sink
   */
 
-  Stream<List<ProductModel>> get productsStream => _productsController.stream;
+  Stream<List<ProductModel>> get productsOutputStream =>
+      _productsStreamController.stream;
+  StreamSink<List<ProductModel>> get productsInputSink =>
+      _productsStreamController.sink;
 
-  Stream<bool> get uplodingStream => _uploadingController.stream;
+  Stream<bool> get uplodingStream => _uploadingStreamController.stream;
+  StreamSink<bool> get uplodingSink => _uploadingStreamController.sink;
 
   /* 
    * Methods
   */
-
   void getProducts() async {
     final products = await _productProvider.getProducts();
-    _productsController.sink.add(products);
+    _productsStreamController.sink.add(products);
   }
 
   void createProduct(ProductModel product) async {
-    _uploadingController.sink.add(true);
+    _uploadingStreamController.sink.add(true);
     await _productProvider.createProduct(product);
-    _uploadingController.sink.add(false);
+
+    _uploadingStreamController.sink.add(false);
+    getProducts();
   }
 
   Future<String> uploadPhoto(File file) async {
-    _uploadingController.sink.add(true);
+    _uploadingStreamController.sink.add(true);
     final photoUrl = await _productProvider.uploadImagen(file);
 
-    _uploadingController.sink.add(false);
+    _uploadingStreamController.sink.add(false);
 
     return photoUrl;
   }
 
   void editProduct(ProductModel product) async {
-    _uploadingController.sink.add(true);
+    _uploadingStreamController.sink.add(true);
     await _productProvider.editProduct(product);
-    _uploadingController.sink.add(false);
+    _uploadingStreamController.sink.add(false);
+    getProducts();
   }
 
   void deleteProduct(String id) async {
@@ -62,7 +68,7 @@ class ProductsBloc {
   */
 
   dispose() {
-    _productsController?.close();
-    _uploadingController?.close();
+    _productsStreamController?.close();
+    _uploadingStreamController?.close();
   }
 }

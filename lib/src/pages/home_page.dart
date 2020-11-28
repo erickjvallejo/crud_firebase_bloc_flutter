@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
 
   _createList(ProductsBloc productsBloc) {
     return StreamBuilder(
-      stream: productsBloc.productsStream,
+      stream: productsBloc.productsOutputStream,
       builder:
           (BuildContext context, AsyncSnapshot<List<ProductModel>> snapshot) {
         if (snapshot.hasData) {
